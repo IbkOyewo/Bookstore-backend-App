@@ -1,50 +1,42 @@
-const express = require('express')
-const db = require('./db')
-const router = require('./routes')
+const bcrypt = require('bcryptjs');
+var jwt = require('jsonwebtoken');
+require('dotenv').config();
 
-const port = 4000
-const app = express()
+// encrypt password
+const hashPassword = async password => {
+    const encryptPassword = await bcrypt.hash(password, 12)
+    return encryptPassword
+}
 
-app.use(express.json())
-app.use(express.urlencoded({
-    extended: true
-}))
+// compare password
+const comparePassword = async(password, userPassword) => {
+    const isValid = await bcrypt.compare(password, userPassword)
+    return isValid
+}
 
-app.get('/', (req, res) => {
-    res.status(200).json({
-        status: 'Success',
-        message: 'Welcome to bookstore API'
-    })
-})
+// Get a token
+const generateToken = async user => {
+    const token = jwt.sign(
+        { id: user.id, email: user.email, userRole: user.role },
+        process.env.TOKEN_KEY,
+        { expiresIn: '2h' }
+        )
 
-app.use('/api', router)
+        return token
+}
 
-app.use((req, res) => {
-    res.status(404).json({
-        status: 'failed',
-        message: 'Not Found',
-        data: 'Route does not exist'
-    })
-})
+// validate token
+const validateToken = async (token, type) => {
+    try {
+        return jwt.verify(token, type === 'logged-in' ? process.env.TOKEN_KEY: process.env.RESET_TOKEN_KEY)
+    } catch (error) {
+        return error
+    }
+}
 
-app.use((err, req, res, next) => {
-    res.status(500).json({
-        status: 'failed',
-        message: 'Internal Server Error'
-    })
-})
-
-
-db.connect()
-.then((obj) => {
-    app.listen(port, () => {
-        obj.done()
-        console.log(`Server is running on port ${port}`)
-    })
-})
-.catch((err) => {
-    console.log(err)
-})
-
-
-module.exports = app
+module.exports = {
+    hashPassword,
+    comparePassword,
+    generateToken,
+    validateToken
+}

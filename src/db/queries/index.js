@@ -1,81 +1,59 @@
 const queries = {
-    addUser: `
-        INSERT INTO users(
-            first_name, 
-            last_name,
+    addNewUser: `
+        INSERT INTO users (
+            firstName,
+            lastName,
+            role,
             email,
-            password,
-            role
-        )
-        VALUES($1, $2, $3, $4, $5)
+            password
+        ) VALUES ($1, $2, $3, $4, $5)
         RETURNING *
     `,
-
     getUser: `
-        SELECT *
-        FROM users
+        SELECT * FROM users
         WHERE email=$1
     `,
-
-    addBook: `
-        INSERT INTO books(
+    getRole: `
+        SELECT * FROM users
+        WHERE role=$1
+    `,
+    addNewBook: `
+        INSERT INTO books (
+            user_id,
             title,
-            author,
-            created_by
-        )
-        VALUES($1, $2, $3)
+            author
+        ) VALUES ($1, $2, $3)
         RETURNING *
     `,
-
     updateBook: `
         UPDATE books
         SET
-        title = $1,
-        author = $2,
-        updated_at = NOW(),
-        updated_by = $3
-        WHERE id = $4
+            title = $1,
+            author = $2
+        WHERE book_details_id=$3
         RETURNING *
     `,
-
-    getBook: `
-        SELECT *
-        FROM books
-        WHERE id = $1
+    getAllBooks: `
+    SELECT * FROM books
     `,
-
-    getBooks: `
-        SELECT * 
-        FROM books
+    addNewBookToUserCatalogue: `
+    INSERT INTO userbooks (
+        user_book_id,
+        title,
+        author
+    ) VALUES ($1, $2, $3)
+    RETURNING *
     `,
-
-    addUserBook: `
-        INSERT INTO user_catalogue(
-            user_id,
-            book_id
-        )
-        VALUES($1, $2)
-        RETURNING *
+    getBookFromCatalogue: `
+        SELECT * FROM userbooks
     `,
-
-    getUserBooks: `
-        SELECT *
-        FROM user_catalogue
-        LEFT JOIN books
-        ON user_catalogue.book_id = books.id
-        WHERE user_catalogue.user_id = $1
+    deleteCatalogueBooks: `
+    DELETE FROM userbooks
+    WHERE id = $1
     `,
-
-    getUserBookById: `
-        SELECT *
-        FROM user_catalogue
-        WHERE user_id = $1 AND book_id = $2
-    `,
-
-    deleteUserBookById: `
-        DELETE FROM user_catalogue
-        WHERE user_id = $1 AND book_id = $2
-        RETURNING *
+    getBooksById: ` 
+        SELECT * FROM books
+        WHERE book_details_id=$1
     `
 }
 
