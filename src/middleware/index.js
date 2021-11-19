@@ -22,6 +22,7 @@ const checkUser = (type) => async(req, res, next) => {
         if (user) {
             return res.status(400).json({
                 status: 'fail',
+                code: 400,
                 message: 'User already exists. Log in',
                 data: []
             })
@@ -74,6 +75,7 @@ const verifyToken = (type, role) => async(req, res, next) => {
         if (!token)
             return res.status(403).json({
                 status: 'fail',
+                code: 403,
                 message: 'No token provided.'
         })
 

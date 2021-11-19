@@ -31,6 +31,7 @@ const loginUser = async(req, res, next) => {
         } else {
             res.status(201).json({
                 status: 'success',
+                code: 201,
                 message: 'User logged in successfully',
                 data: validated
             })
@@ -47,6 +48,7 @@ const addBook = async(req, res, next) => {
 
         res.status(201).json({
             status: 'success',
+            code: 201,
             message: `Books has been added successfully by the admin`,
             data: book
         })
@@ -62,7 +64,8 @@ const addBookToCatalogue = async(req, res, next) => {
 
         res.status(201).json({
             status: 'success',
-            message: `Books has been added successfully by the admin`,
+            code: 201,
+            message: `Books has been added successfully by the user`,
             data: catalogueBook
         })
     } catch (error) {
@@ -77,6 +80,7 @@ const updateBook = async(req, res, next) => {
 
         res.status(201).json({
             status: 'success',
+            code: 201,
             message: `Books has been updated successfully by the admin`,
             data: newBook
         })
@@ -93,6 +97,7 @@ const getBooks = async(req, res, next) => {
 
         res.status(200).json({
             status: 'success',
+            code: 200,
             message: 'All books fetched successfully by user',
             data: allBooks
         })
@@ -108,6 +113,7 @@ const getCatalogueBooks = async(req, res, next) => {
 
         res.status(200).json({
             status: 'success',
+            code: 200,
             message: 'All books in the catalogue fetched successfully by user',
             data: allCatalogueBooks
         })
@@ -118,11 +124,12 @@ const getCatalogueBooks = async(req, res, next) => {
 
 const deleteCatalogueBook = async(req, res, next) => {
     try {
-        const { body, params: {id}} = req
-        const deleteBook = await deleteBooksFromCatalogue(body, id)
+        const { params: {id}} = req
+        const deleteBook = await deleteBooksFromCatalogue(id)
         
         res.status(200).json({
-            status: "Success",
+            status: "success",
+            code: 200,
             message: `Catalogue books deleted successfully`,
             data: deleteBook
         })
